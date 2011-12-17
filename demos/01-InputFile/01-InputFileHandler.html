@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>01-InputFile</title>
+    <link href="../../style/demos.css" rel="stylesheet">
+</head>
+<body>
+
+<details>
+    <summary>Selecting local file(s)</summary>
+    <ul>
+        <li>This is the very basic option. Input field (type=file).</li>
+        <li>HTML5 also support (by default) Drag and dop of files on the input</li>
+        <li>The input field will support selecting directories as well</li>
+    </ul>
+
+</details>
+<input type="file" id="files" webkitdirectory>
+<hr>
+<output></output>
+<script>
+    var Dummy = function() {
+
+        // The input type file domNode
+        return{
+
+            init:function() {
+                document.querySelector('#files').addEventListener('change',
+                        function(e) {
+                            Dummy.processFiles(e);
+                        }, false);
+            },
+
+            processFiles: function(event) {
+
+                var i, file, files, output;
+
+                // FileList object. list of the selected files
+                files = event.target.files;
+
+                // The output dom Node
+                output = document.querySelector('output');
+
+                // Extract the information we can from the files/folder
+                for (i = 0; file = files[i]; i++) {
+                    output.insertAdjacentHTML('beforeEnd', '<div>' + JSON.stringify(file) + '</div>');
+                    // f.name
+                    // f.type
+                    // f.size
+                    // f.lastModifiedDate.toLocaleDateString()
+                }
+            }
+
+        }
+
+        this.processFiles();
+    }();
+
+    Dummy.init();
+</script>
+</body>
+</html>

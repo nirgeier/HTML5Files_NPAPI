@@ -1,0 +1,40 @@
+section div.path {
+    color: #E3E3E3;
+    position: absolute;
+    top: 5px;
+    font-size: 50%;
+    opacity: 0.5;
+}
+
+#title-slide h1 {
+    font-size: 6em;
+    text-shadow: 0 0 32px #0AF, 0 0 2px white;
+}
+
+footer {
+    position: fixed;
+    bottom: 16px;
+    color: #eeeeee;
+    text-align: center;
+    height: 32px;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    line-height: 32px;
+    vertical-align: middle;
+    opacity: 0.25;
+}
+
+.deck-container footer div {
+    display: inline-block;
+    font-size: 0.75em;
+    font-weight: normal;
+}
+
+.deck-container footer .name {
+    color: #0AF;
+}
+
+#footerBug {
+    vertical-align: middle;
+}
