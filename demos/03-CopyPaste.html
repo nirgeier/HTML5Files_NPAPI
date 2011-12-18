@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo 3: Copy And Paste</title>
+    <!-- Core and extension CSS files -->
+    <link rel="stylesheet" href="../style/custom.css">
+    <link rel="stylesheet" href="../deck/core/deck.core.css">
+    <link rel="stylesheet" id="style-theme-link" href="../style/neon.css">
+    <link rel="stylesheet" id="transition-theme-link" href="../style/fade.css">
+
+</head>
+<body class="deck-container">
+
+<section class="slide demoCode">
+    <h2>Demo 3: Copy And Paste</h2>
+    <img src="../images/bug.png">&nbsp;&nbsp;
+    <img src="../images/paper.png" width="96px">&nbsp;&nbsp;
+    <img src="../images/HTML5_Badge.png" width="96px;">&nbsp;&nbsp;
+    <hr/>
+    <output></output>
+    <script>
+
+        var Dummy = function() {
+
+            return{
+
+                init:function() {
+                    document.body.onpaste = function(e) {
+
+                        var i, items, img,blob;
+
+                        // Get the selected items
+                        items = e.clipboardData.items;
+                        for (i = 0; i < items.length; ++i) {
+                            // Check the type that we want in this demo
+                            // Only process png images.
+                            if (items[i].kind === 'file' && items[i].type === 'image/png') {
+                                blob = items[i].getAsFile();
+                                img = document.createElement('img');
+
+                                // Create the image from the binary data (file content)
+                                img.src = window.webkitURL.createObjectURL(blob);
+                                document.querySelector('output').appendChild(img);
+                            }
+                        }
+                    }
+                }
+            }; // return
+        }();
+
+        Dummy.init();
+    </script>
+
+</body>
+</html>

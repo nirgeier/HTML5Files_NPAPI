@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo 1: Simple input field</title>
+    <!-- Core and extension CSS files -->
+    <link rel="stylesheet" href="../style/custom.css">
+    <link rel="stylesheet" href="../deck/core/deck.core.css">
+    <link rel="stylesheet" id="style-theme-link" href="../style/neon.css">
+    <link rel="stylesheet" id="transition-theme-link" href="../style/fade.css">
+
+</head>
+<body class="deck-container">
+
+<section class="slide demoCode">
+    <h2>Demo 1: Simple input field</h2>
+
+    <details>
+        <summary>Selecting local file(s)</summary>
+        <ul>
+            <li>This is the very basic option. Input field (type=file).</li>
+            <li>HTML5 also support (by default) Drag and dop of files on the input</li>
+            <li>The input field will support selecting directories as well</li>
+            <li>The input field display tooltip with the selected files</li>
+        </ul>
+
+    </details>
+    <br/>
+    <input type="file" id="id1" multiple>
+    <output></output>
+</section>
+<script>
+
+    var Dummy = function() {
+
+        var
+            // The input type file domNode
+                fileInput = document.querySelector('#id1'),
+
+            // The input type file domNode
+                output = document.querySelector('output');
+
+        return{
+
+            init:function() {
+                fileInput.addEventListener('change', Dummy.processFiles, false);
+            },
+
+            processFiles: function(e) {
+                var file,files, i, data;
+
+                // get the list of the selected files
+                files = e.target.files;
+
+                // Clear previous data
+                output.innerHTML = '';
+
+                for (i = 0; file = files[i]; i++) {
+                    data = [];
+                    data.push('<hr/><mark>Name:</mark>' + file.name);
+                    data.push('<mark>Type:</mark>' + file.type || 'n/a');
+                    data.push('<mark>Size:</mark>' + file.size + ' bytes');
+                    data.push('<mark>Last modified:</mark>' + (file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() : 'n/a'));
+                    output.insertAdjacentHTML('beforeEnd', data.join('<br/>'));
+                }
+
+            }
+        }; // return
+    }();
+
+    Dummy.init();
+
+
+</script>
+
+<!-- Deck Core and extensions -->
+<script src="../js/syntaxHighlighter.js"></script>
+
+</body>
+</html>

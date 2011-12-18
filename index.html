@@ -17,6 +17,8 @@
     <meta name="author" content="Nir Geier">
     <meta name="viewport" content="width=1024, user-scalable=no">
 
+    <link rel="stylesheet" href="style/syntaxHighlighter.css" type="text/css"/>
+
     <!-- Core and extension CSS files -->
     <link rel="stylesheet" href="style/custom.css">
     <link rel="stylesheet" href="deck/core/deck.core.css">
@@ -42,11 +44,13 @@
 <section class="slide" id="contact">
     <div class="path">Contact details</div>
     <h2>Lecture</h2>
-    <a href="https://github.com/nirgeier/W3CLecture">https://github.com/nirgeier/W3CLecture</a>
+    <a href="https://github.com/nirgeier/HTML5Files_NPAPI">https://github.com/nirgeier/HTML5Files_NPAPI</a>
+
     <h2>Twitter</h2>
-    @nirgeier
+    <a href="http://twitter.com/nirgeier">@nirgeier</a>
+
     <h2>Email</h2>
-    nirgeier@gmail.com<br/>
+    nirgeier@gmail.com
 </section>
 
 
@@ -55,102 +59,112 @@
     <h2>Today - A short preview of files api</h2>
     <ol>
         <li class="slide">
-            <h3>File API</h3>
+            <h3>File API (Read)</h3>
 
             <p>Introduction to HTML5 file API </p>
         </li>
         <li class="slide">
-            <h3>FileSystem API (sandbox filesystem)</h3>
+            <h3>FileSystem API (Read/Write)</h3>
 
             <p>Introduction to HTML5 fileSystem API </p>
         </li>
         <li class="slide">
-            <h3>NPAPI (unlimited HD access)</h3>
+            <h3>NPAPI (Steal files ... )</h3>
 
-            <p>Access (but don't steal ... ) any file on the client HD</p>
+            <p>[not part of W3C ] <br/>Full Access to any file on the client HD</p>
         </li>
     </ol>
 </section>
 
 <section class="slide">
-    <h3 class="color2">File API features</h3>
-    <mark>File System API extends those features.</mark>
-    <ul data-list="buildUpList">
-        <li>
+    <div class="path">File API &raquo; Features</div>
+    <h2>File API features</h2>
+    <h6>* File System API extends this API (Write &rarr; FileWriter)</h6>
+    <br/>
+    <ul>
+        <li class="slide">
             <mark>Import</mark>
             from the filesystem or the web.
         </li>
-        <li>
+        <li class="slide">
             <mark>Create</mark>
             new files from scratch.
         </li>
-        <li>
+        <li class="slide">
             <mark>Manipulate</mark>
             existing file data.
         </li>
-        <li>
+        <li class="slide">
             <mark>Store</mark>
             file data on the client.
         </li>
-        <li>
+        <li class="slide">
             <mark>Publish</mark>
             files back to the web.
         </li>
     </ul>
 </section>
 <section class="slide">
-    <h3 class="color2">Local files</h3>
+    <div class="path">File API &raquo; Objects</div>
+    <h2>File API Objects</h2>
 
-    The File API specification provides a <br/>
-    standard way to interact with local files.
+    <h6> The File API spec provides a standard way to interact with local files.</h6>
+    <br/>
 
-    <p class="color3">API Objects:</p>
-    <ul data-list="buildUpList" class="moreItems">
-        <li>
+    <p>API Objects:</p>
+    <ul>
+        <li class="slide">
             <mark>File</mark>
-            - an individual file
+            Provides readonly information and a reference to the file handle.
         </li>
-        <li>
+        <li class="slide">
             <mark>FileList</mark>
-            - an array-like sequence of File objects.
+            An array-like sequence of File objects.
         </li>
-        <li>
+        <li class="slide">
+            <mark>FileReader</mark>
+            Read file contents into memory (asynchronously)
+        </li>
+        <li class="slide">
             <mark>Blob</mark>
-            - Allows for slicing a file into byte ranges.
+            Allows for slicing a file into byte ranges.
         </li>
-        <li>
-            <mark>Drag And Drop</mark>
-            - build in support for files Drag And Drop<br/></li>
+        <li class="slide">
+            <mark>Drag/Drop</mark>
+            Build in support for files Drag And Drop
+        </li>
     </ul>
 
 </section>
 
 <section class="slide">
-    <h3 class="color2">File Reader</h3>
+    <div class="path">File API &raquo; Objects</div>
+    <h2>File API - Flow</h2>
 
-    <ul data-list="buildUpList">
-        <li>
+    <ul>
+        <li class="slide">
             After you've obtained a
-            <mark>File</mark>
+            <mark class="inline">File</mark>
             reference, instantiate a
-            <mark>FileReader</mark>
+            <mark class="inline">FileReader</mark>
             object inorder to work with the file.
         </li>
-        <li>
+        <li class="slide">
             The
-            <mark>FileReader</mark>
+            <mark class="inline">FileReader</mark>
             used to
-            <mark>asynchronously</mark>
+            <mark class="inline">asynchronously</mark>
             read the file content (into memory) using JavaScript event handling.
         </li>
-        <li>It is possible to monitor the<br/>
-            <mark>progress of a read</mark>
-            ,
-            <mark>catch errors</mark>
+        <li class="slide">
+            It is possible to monitor the<br/>
+            <mark class="inline">progress</mark>
+            of a read ,
+            <mark class="inline">catch errors</mark>
             ,
             and determine when a load is
-            <mark>complete</mark>
-            .
+            <mark class="inline">complete.</mark>
+            <br/>
             In many ways the APIs resemble XMLHttpRequest's event model.
         </li>
 
@@ -158,30 +172,28 @@
 </section>
 
 <section class="slide">
-    <h3 class="color2">FileReader (Methods)</h3>
+    <div class="path">File API &raquo; Objects</div>
+    <h2>File API - FileReader (Methods)</h2>
 
     <p>FileReader includes four options for reading a file, asynchronously:</p>
-    <ul data-list="buildUpList">
-        <li>FileReader.
-            <mark>readAsBinaryString(Blob|File)</mark>
+    <ul>
+        <li class="slide">
+            <mark>FileReader.readAsBinaryString(Blob|File)</mark>
             <br/>
             Result = the file/blob's data as a binary string (bytes 0-255).
         </li>
-        <li>
-            FileReader.
-            <mark>readAsText(Blob|File, opt_encoding)</mark>
+        <li class="slide">
+            <mark>FileReader.readAsText(Blob|File,&nbsp;opt_encoding)</mark>
             <br/>
             Result = the file/blob's data as a text string. (Default encoding is UTF-8)
         </li>
-        <li>
-            FileReader.
-            <mark>readAsDataURL(Blob|File)</mark>
+        <li class="slide">
+            <mark>FileReader.readAsDataURL(Blob|File)</mark>
             <br/>
             Result = the file/blob's data encoded as a data URL.
         </li>
-        <li>
-            FileReader.
-            <mark>readAsArrayBuffer(Blob|File)</mark>
+        <li class="slide">
+            <mark>FileReader.readAsArrayBuffer(Blob|File)</mark>
             <br/>
             Result = the file/blob's data as an ArrayBuffer object.
         </li>
@@ -189,35 +201,36 @@
 
 </section>
 <section class="slide">
-    <h3 class="color2">FileReader (Events)</h3>
-    <ul class="moreItems">
-        <li>onloadstart</li>
-        <li>onprogress</li>
-        <li>onload</li>
-        <li>onabort</li>
-        <li>onerror</li>
-        <li>onloadend</li>
+    <div class="path">File API &raquo; Objects</div>
+    <h2>File API - FileReader (Events)</h2>
+    <ul>
+        <li class="slide">onloadstart</li>
+        <li class="slide">onprogress</li>
+        <li class="slide">onload</li>
+        <li class="slide">onloadend <br><br></li>
+        <li class="slide">onabort</li>
+        <li class="slide">onerror</li>
+
     </ul>
 </section>
 
 <section class="slide">
-    <h3 class="color2">Reading local files</h3>
+    <div class="path">File API &raquo; Code</div>
+    <h2>File API - Code</h2>
 
     <p>&lt;input type=&quot;file&quot; id=&quot;...&quot; name=&quot;...&quot; multiple webkitdirectory/&gt;</p>
     <br/>
-    <pre class="brush: javascript; highlight: [2,6]">
+    <pre class="brush: javascript; highlight: [2,7]">
         // Add the event listener to the input type="file"
         document.querySelector('#id').addEventListener('change',
-            function( e){
+            function(e){
+                var i, files;
 
                 // FileList object. list of the selected files
-                var files = e.target.files;
-
-                // files is a FileList of File objects. List some properties.
-                var output = [];
+                files = e.target.files;
 
                 // Extract the information we can from the files/folder
-                for (var i = 0, f; f = files[i]; i++) {
+                for (i = 0, f; f = files[i]; i++) {
                     // f.name
                     // f.type
                     // f.size
@@ -229,111 +242,24 @@
 </section>
 
 <section class="slide">
-    <h3 class="color2">Reading local files (slice)</h3>
+    <div class="path">File API &raquo; Code</div>
+    <h2>File API - Demos</h2>
 
-    <p>The slice method allow us to read parts of the file.</p>
-    <pre class="brush: javascript; highlight:[2,12]">
-
-    // If we use onloadend, we need to check the readyState.
-    reader.onloadend = function(evt) {
-
-        // DONE == 2
-        if (evt.target.readyState === FileReader.DONE) {
-            // evt.target.result;
-        }
-    };
-
-    // Chrome: webkitSlice
-    // FF:     mozSlice
-    var blob = file.slice(start, length);
-    reader.readAsBinaryString(blob);
-
-    </pre>
-</section>
-
-<section class="slide">
-    <h3 class="color2">Copy and paste</h3>
-
-    <pre class="brush: javascript; highlight:[2,5,9,14,16]">
-        // Add the paste code to the page
-        document.body.onpaste = function(e) {
-
-            // Get the reference to teh image file
-            var items = e.clipboardData.items;
-            for (var i = 0; i < items.length; ++i) {
-
-                // Verify that we have  a png file
-                if (items[i].kind == 'file' && items[i].type == 'image/png') {
-
-                    var img = document.createElement('img');
-
-                    // Get the file data
-                    var blob = items[i].getAsFile();
-                    // Set the image src
-                    img.src = window.webkitURL.createObjectURL(blob);
-
-                    document.body.appendChild(img);
-                }
-            }
-        };
-
-
-    </pre>
-</section>
-
-<section class="slide">
-    <h3 class="color2">Monitoring the progress of a read</h3>
-
-    <p> One of the nice things that we get for free when using
-        <mark>async</mark>
-        event handling
-        is the ability to
-        <mark>monitor the progress</mark>
-        of the file read; useful for large files,
-        catching errors,
-        and figuring out when a read is complete.
-        <br/>
-        The
-        <mark>onloadstart</mark>
-        and
-        <mark>onprogress</mark>
-        events can be used
-        to monitor the progress of a read.
-    </p>
-    <span data-list="hidden">
-    <pre class="brush: javascript; highlight: [6,8,13]">
-    // store the progress percent
-    var percentLoaded;
-
-    // evt is an ProgressEvent.
-    function updateProgress(evt) {
-        if (evt.lengthComputable) {
-          // calculate the progress in %
-          var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
-        }
-      }
-
-    // reader = FileReader, register the progress event
-    reader.onprogress = updateProgress;
-    </pre>
-</span>
-</section>
-<section class="slide">
-    <div class="path">File API &raquo; Demos</div>
-    <h2>Demos</h2>
-
-    <ol>
-        <li>
-            <h3><a href="demos/05-CopyPaste/05-CopyPaste.html" target="_blank">Input type=file</a></h3>
+    <ul>
+        <li class="slide">
+            <a href="demos/01-InputFile.html" target="_blank">Simple</a>
         </li>
         <li class="slide">
-            <h3><a href="demos/05-CopyPaste/05-CopyPaste.html" target="_blank">Input type=file</a></h3>
+            <a href="demos/02-InputFileD&D.html" target="_blank">Drag & Drop</a><br/>
         </li>
         <li class="slide">
+            <a href="demos/03-CopyPaste.html" target="_blank">Copy & Paste</a>
         </li>
-    </ol>
+        <li class="slide">
+            <a href="demos/04-Slice.html" target="_blank">Read part of file</a>
+        </li>
+    </ul>
 </section>
-
 
 
 <p class="deck-status">
@@ -358,12 +284,14 @@
 <script src="deck/extensions/goto/deck.goto.js"></script>
 <script src="deck/extensions/status/deck.status.js"></script>
 <script src="deck/extensions/navigation/deck.navigation.js"></script>
+<script src="js/syntaxHighlighter.js"></script>
 
 <!-- Specific to this page -->
 <script>
     $(function() {
         // Deck initialization
         $.deck('.slide');
+        SyntaxHighlighter.all();
     });
 </script>
 </body>

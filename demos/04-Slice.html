@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo 4: Slice</title>
+    <!-- Core and extension CSS files -->
+    <link rel="stylesheet" href="../style/custom.css">
+    <link rel="stylesheet" href="../deck/core/deck.core.css">
+    <link rel="stylesheet" id="style-theme-link" href="../style/neon.css">
+    <link rel="stylesheet" id="transition-theme-link" href="../style/fade.css">
+
+</head>
+<body class="deck-container">
+
+<section class="slide demoCode">
+    <h2>Demo 4: Slice</h2>
+
+    <details>
+        <summary>Browser prefix</summary>
+        <ul>
+            <li>
+                <mark>Firefox:</mark>
+                mozSlice
+            </li>
+            <li>
+                <mark>Chrome:</mark>
+                webkitSlice
+            </li>
+        </ul>
+    </details>
+    <br/>
+
+    <div id="dropZone">Drop files here</div>
+    <br/>
+    <fieldset>
+        <legend>Read Range</legend>
+        <label>
+            <mark>From:</mark>
+            <input class="shortInput" type="number" id="start" value="0"></label><br/>
+        <label>
+            <mark>To:</mark>
+            <input class="shortInput" type="number" id="end" value="10"></label>
+    </fieldset>
+    <hr>
+    <output></output>
+</section>
+<script>
+
+    var Dummy = function() {
+
+        var
+            // The input type file domNode
+                dropZone = document.querySelector('#dropZone'),
+
+            // The input type file domNode
+                output = document.querySelector('output');
+
+        return{
+
+            init:function() {
+
+                // Setup the dnd listeners.
+                dropZone.addEventListener('dragover', Dummy.handleDragOver, false);
+                dropZone.addEventListener('drop', Dummy.readBytes, false);
+            },
+
+            readBytes: function(dropEvent) {
+                var
+                        file, blob,
+                        start = document.querySelector('#start').value,
+                        end = document.querySelector('#end').value,
+                        files = dropEvent.dataTransfer.files,
+                        reader = new FileReader();
+
+                if (!files.length) {
+                    alert('Please select a file!');
+                    return;
+                }
+
+                // If we use onloadend, we need to check the readyState.
+                reader.onloadend = function(readEvent) {
+                    if (readEvent.target.readyState === FileReader.DONE) { // DONE == 2
+                        output.textContent = readEvent.target.result;
+                    }
+                };
+
+                // Get the first file
+                file = files[0];
+
+                // Read the parts that we want to read
+                blob = file.webkitSlice(start, end);
+
+                // read the file as text
+                reader.readAsBinaryString(blob);
+            },
+
+
+            handleDragOver: function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+            }
+
+
+        }; // return
+    }();
+
+    Dummy.init();
+</script>
+
+</body>
+</html>

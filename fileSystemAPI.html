@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<!--
+    http://www.google.co.il/search?gcx=c&sourceid=chrome&ie=UTF-8&q=jsfillde+workers
+    https://github.com/rwldrn/jquery-hive
+    http://blogs.msdn.com/b/davrous/archive/2011/07/15/introduction-to-the-html5-web-workers-the-javascript-multithreading-approach.aspx
+    http://david.blob.core.windows.net/html5/HelloWebWorkers_EN.htm
+    http://www.html5rocks.com/en/tutorials/workers/basics/
+    http://slides.html5rocks.com/#web-workers
+    http://weblog.bocoup.com/javascript-web-workers-from-basics-to-jquery-hive-part-i
+    http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html
+    http://www.sitepoint.com/javascript-shared-web-workers-html5/
+-->
+
+<head>
+    <meta charset="utf-8">
+    <title>WebWorkers, FileAPI</title>
+    <!--link href='http://fonts.googleapis.com/css?family=Crimson+Text:regular,600,bold' rel='stylesheet' type='text/css'-->
+    <link rel="stylesheet" href="style/main.css">
+    <link href="style/syntaxHighlighter.css" rel="stylesheet" type="text/css"/>
+    <script src="js/syntaxHighlighter.js" type="text/javascript"></script>
+</head>
+
+<body>
+
+<div class="toc">
+    <div class="current"></div>
+    /
+    <div class="total"></div>
+</div>
+
+<!-- Any section element inside of this container is displayed as a slide -->
+<div id="main">
+
+<section>
+    <h1 class="color2 centered">File System API</h1>
+</section>
+
+<section>
+    <h3 class="color2">File System API - Description</h3>
+
+    <p>
+        The FileSystem APIs give applications the ability to<br/>
+        <span class="highlight">read/write</span> files and directories in a secure,<br/>
+        <span class="highlight">sandboxed</span> file system on a user's local machine.
+    </p>
+</section>
+
+<section>
+    <h3 class="color2">API objects</h3>
+
+    The API contains the following:
+    <ul data-list="buildUpList">
+        <li>
+            Reading and manipulating files:<br/>
+            <span class="highlight">File/Blob, FileList, FileReader</span>
+        </li>
+        <li>
+            Creating and writing: <br/>
+            <span class="highlight">BlobBuilder, FileWriter</span>
+        </li>
+        <li>
+            Directories and file system access: <br/>
+            <span class="highlight">DirectoryReader, FileEntry/DirectoryEntry, LocalFileSystem</span>
+        </li>
+    </ul>
+
+</section>
+
+<section>
+    <h3 class="color2">FileEntry methods and fields</h3>
+
+    <pre class="brush: javascript">
+        fileEntry.isFile === true
+        fileEntry.isDirectory === false
+        fileEntry.name
+        fileEntry.fullPath
+
+        fileEntry.getMetadata(successCallback, opt_errorCallback);
+        fileEntry.remove(successCallback, opt_errorCallback);
+        fileEntry.moveTo(dirEntry, opt_newName, opt_successCallback, opt_errorCallback);
+        fileEntry.copyTo(dirEntry, opt_newName, opt_successCallback, opt_errorCallback);
+        fileEntry.getParent(successCallback, opt_errorCallback);
+        fileEntry.toURL(opt_mimeType);
+
+        fileEntry.file(successCallback, opt_errorCallback);
+        fileEntry.createWriter(successCallback, opt_errorCallback);
+    </pre>
+</section>
+
+<section>
+    <h3 class="color2">Opening the file system</h3>
+    <pre class="brush: javascript;">
+        window.requestFileSystem(
+          TEMPORARY,        // persistent vs. temporary storage
+          1024 * 1024,      // size (bytes) of needed space
+          initFs,           // success callback
+          opt_errorHandler  // opt. error callback, denial of access
+        );
+    </pre>
+</section>
+
+<section>
+    <h3 class="color2">Creating a file</h3>
+    <pre class="brush: javascript;">
+            // The following code creates an empty file called "log.txt" in the root of the app's file system:
+        function onInitFs(fs) {
+            fs.root.getFile('log.txt',
+                {create: true, exclusive: true},
+                function(fileEntry) {
+                    // fileEntry.isFile === true
+                    // fileEntry.name == 'log.txt'
+                    // fileEntry.fullPath == '/log.txt'
+                },
+            errorHandler);
+        }
+
+        window.requestFileSystem(window.TEMPORARY, 1024*1024, onInitFs, errorHandler);
+    </pre>
+</section>
+
+<section>
+    <h3 class="color2">Reading a file by name</h3>
+    <pre class="brush: javascript; highlight: [14]">
+        function onInitFs(fs) {
+
+            fs.root.getFile('log.txt', {}, function(fileEntry) {
+
+                // Get a File object representing the file,
+                // then use FileReader to read its contents.
+                fileEntry.file(function(file) {
+                   var reader = new FileReader();
+
+                   reader.onloadend = function(e) {
+                     // data is stored inside: this.result;
+                   };
+
+                   reader.readAsText(file);
+                }, errorHandler);
+
+            }, errorHandler);
+        }
+
+        window.requestFileSystem(window.TEMPORARY, 1024*1024, onInitFs, errorHandler);
+    </pre>
+</section>
+
+<section>
+    <h3 class="color2">Writing to a file</h3>
+    <pre class="brush: javascript;">
+        //The following code creates an empty file called "log.txt" (if it doesn't exist) and fills it with the text 'Lorem Ipsum'.
+        function onInitFs(fs) {
+
+          fs.root.getFile('log.txt', {create: true}, function(fileEntry) {
+
+            // Create a FileWriter object for our FileEntry (log.txt).
+            fileEntry.createWriter(function(fileWriter) {
+
+              fileWriter.onwriteend = function(e) {
+                console.log('Write completed.');
+              };
+
+              fileWriter.onerror = function(e) {
+                console.log('Write failed: ' + e.toString());
+              };
+
+              // Create a new Blob and write it to log.txt.
+              var bb = new BlobBuilder(); // Note: window.WebKitBlobBuilder in Chrome 12.
+              bb.append('Lorem Ipsum');
+              fileWriter.write(bb.getBlob('text/plain'));
+
+            }, errorHandler);
+          }, errorHandler);
+        }
+        window.requestFileSystem(window.TEMPORARY, 1024*1024, onInitFs, errorHandler);
+    </pre>
+</section>
+
+<section>
+    <h3 class="color2">Appending data to a file</h3>
+    <pre class="brush: javascript;">
+    // The following code appends the text 'Hello World' to the end of our log file. An error is thrown if the file does not exist.
+    function onInitFs(fs) {
+        fs.root.getFile('log.txt', {create: false}, function(fileEntry) {
+
+            // Create a FileWriter object for our FileEntry (log.txt).
+            fileEntry.createWriter(function(fileWriter) {
+
+                fileWriter.seek(fileWriter.length); // Start write position at EOF.
+
+                // Create a new Blob and write it to log.txt.
+                var bb = new BlobBuilder(); // Note: window.WebKitBlobBuilder in Chrome 12.
+                bb.append('Hello World');
+                fileWriter.write(bb.getBlob('text/plain'));
+                }, errorHandler);
+        }, errorHandler);
+    }
+    window.requestFileSystem(window.TEMPORARY, 1024*1024, onInitFs, errorHandler);
+    </pre>
+</section>
+
+<section>
+    <h3 class="color2">Removing a file</h3>
+    <pre class="brush: javascript;">
+        window.requestFileSystem(window.TEMPORARY, 1024*1024, function(fs) {
+          fs.root.getFile('log.txt', {create: false}, function(fileEntry) {
+
+            fileEntry.remove(function() {
+              console.log('File removed.');
+            }, errorHandler);
+
+          }, errorHandler);
+        }, errorHandler);
+    </pre>
+</section>
+
+<section>
+    <h3 class="color2">Working with directories</h3>
+
+    <p>
+        Directories in the sandbox are represented by the <span class="highlight">DirectoryEntry</span> <br/>
+        interface, which shares most of <span class="highlight">FileEntry</span>'s properties (they inherit from a
+        common Entry interface). <br/>
+        However, DirectoryEntry has additional methods for manipulating directories.
+        <br/>
+        <br/>
+        Properties and methods of <span class="highlight">DirectoryEntry</span>:
+    </p>
+    <pre class="brush: javascript;">
+        dirEntry.isDirectory === true
+        // See the section on FileEntry for other inherited properties/methods.
+
+        var dirReader = dirEntry.createReader(successCallback, opt_errorCallback);
+        dirEntry.getFile(path, opt_flags, opt_successCallback, opt_errorCallback);
+        dirEntry.getDirectory(path, opt_flags, opt_successCallback, opt_errorCallback);
+        dirEntry.removeRecursively(successCallback, opt_errorCallback);
+    </pre>
+</section>
+
+
+<section>
+
+    <h3>File System URLs ( filesystem: )</h3>
+    <pre class="brush: javascript;">
+        var img = document.createElement('img');
+
+        // filesystem:http://example.com/temporary/myfile.png
+        img.src = fileEntry.toURL();
+        document.body.appendChild(img);
+
+        // Retrieve a file by its filesystem URL:
+        window.resolveLocalFileSystemURL(img.src, function(fileEntry) { ... });
+        </pre>
+</section>
+
+</div>
+
+<script src="js/slideshow.js"></script>
+<script src="js/jquery.min.js"></script>
+<script type="text/javascript">SyntaxHighlighter.all();</script>
+
+</body>
+</html>

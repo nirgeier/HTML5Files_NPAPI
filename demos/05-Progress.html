@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo 5: Progress</title>
+    <!-- Core and extension CSS files -->
+    <link rel="stylesheet" href="../style/custom.css">
+    <link rel="stylesheet" href="../deck/core/deck.core.css">
+    <link rel="stylesheet" id="style-theme-link" href="../style/neon.css">
+    <link rel="stylesheet" id="transition-theme-link" href="../style/fade.css">
+</head>
+<body class="deck-container">
+
+<section class="slide demoCode">
+    <h2>Demo 5: Progress</h2>
+
+    <details open="">
+        <summary>Info</summary>
+        The
+        <mark class="inline">onloadstart</mark>
+        and
+        <mark class="inline">onprogress</mark>
+        events can be used to monitor the progress of a read.</mark>
+    </details>
+    <br/>
+
+    <div id="dropZone">Drop files here</div>
+    <hr>
+    <mark id="abort">Cancel read</mark>
+    <br/>
+    <br/>
+
+    <div id="progress_bar">
+        <div class="completed"></div>
+    </div>
+</section>
+<script>
+
+    var Dummy = function() {
+
+        var
+            // The input type file domNode
+                dropZone = document.querySelector('#dropZone'),
+
+            // The input type file domNode
+                progress = document.querySelector('.completed'),
+
+            // The progress bar container
+                progressBar = document.querySelector('#progress_bar'),
+
+            // The file reader
+                reader;
+
+        return{
+
+            init:function() {
+
+                // Setup the dnd listeners.
+                dropZone.addEventListener('dragover', Dummy.handleDragOver, false);
+                dropZone.addEventListener('drop', Dummy.readFile, false);
+                document.querySelector('#abort').addEventListener('click', Dummy.abortRead, false);
+
+                // Set the reader
+                reader = new FileReader();
+
+                // Register error method
+                reader.onerror = this.errorHandler;
+
+                // register process method
+                reader.onprogress = this.updateProgress;
+                reader.onabort = function(evt) {
+                    alert('File read cancelled');
+                };
+
+                //
+                reader.onloadstart = function(evt) {
+                    var classList = progressBar.classList;
+                    if (!classList.contains('loading')) {
+                        progressBar.classList.add('loading');
+                    }
+
+                };
+
+                // When onload fired the file was fully loaded
+                reader.onload = function(evt) {
+                    // Ensure that the progress bar displays 100% at the end.
+                    progress.style.width = '100%';
+                    progress.textContent = '100';
+                }
+
+            },
+
+            /**
+             * Read the file into memory
+             * @param e
+             */
+            readFile: function(e) {
+                // Reset progress indicator on new file selection.
+                progress.style.width = '0%';
+                progress.textContent = '0';
+
+                // Read in the image file as a binary string.
+                reader.readAsBinaryString(e.dataTransfer.files[0]);
+            },
+
+            handleDragOver: function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+            },
+
+            /**
+             * Abort reading
+             */
+            abortRead: function () {
+                reader.abort();
+            },
+
+            errorHandler: function (evt) {
+                switch (evt.target.error.code) {
+                    case evt.target.error.NOT_FOUND_ERR:
+                        alert('File Not Found!');
+                        break;
+                    case evt.target.error.NOT_READABLE_ERR:
+                        alert('File is not readable');
+                        break;
+                    case evt.target.error.ABORT_ERR:
+                        break; // noop
+                    default:
+                        alert('An error occurred reading this file.');
+                }
+            },
+
+            updateProgress:function(evt) {
+                // evt is an ProgressEvent.
+                if (evt.lengthComputable) {
+                    var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
+
+                    // Increase the progress bar length.
+                    if (percentLoaded < 100) {
+                        progress.style.width = percentLoaded + '%';
+                        progress.textContent = percentLoaded;
+                    }
+                }
+            }
+        }; // return
+    }();
+
+    Dummy.init();
+</script>
+
+</body>
+</html>

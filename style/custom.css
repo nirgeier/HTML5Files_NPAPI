@@ -1,3 +1,34 @@
+body {
+    width: 960px;
+    margin: 0 auto;
+    background-color: #000000;
+    color: #FFFFFF;
+    font-family: "Segoe UI", Arial;
+    font-size: 150% !important;
+}
+
+input[type=file], #dropZone {
+    border: 1px solid #eeeeee;
+    background-color: #eeeeee;
+    border-radius: 10px;
+    vertical-align: middle;
+    padding: 25px;
+    color: #000000;
+    font-size: 75% !important;
+}
+
+hr {
+    color: #FFFFFF;
+}
+
+.demoCode {
+    font-size: 75% !important;
+}
+
+.demoCode>img {
+    display: inline !important;
+}
+
 section div.path {
     color: #E3E3E3;
     position: absolute;
@@ -37,4 +68,62 @@ footer {
 
 #footerBug {
     vertical-align: middle;
+}
+
+.yellow {
+    color: yellow;
+}
+
+.shortInput {
+    width: 50px;
+    height: 15px;
+    border: 0px;
+    font-size: 0.75em !important;
+}
+
+#progress_bar {
+    font-size: 14px;
+    clear: both;
+    opacity: 1;
+    -moz-transition: opacity 1s linear;
+    -o-transition: opacity 1s linear;
+    -webkit-transition: opacity 1s linear;
+    border: 1px solid white;
+    padding: 2px;
+    background-color: #FFFFFF;
+    opacity: 0;
+    border-radius: 10px;
+
+}
+
+#progress_bar.loading {
+    opacity: 1.0;
+}
+
+#progress_bar .completed {
+    background-color: #000000;
+    height: 20px;
+    width: 0;
+    text-align: center;
+    line-height: 20px;
+    font-size: 150%;
+    color: #000000;
+    font-weight: bold;
+    text-shadow: 0 0 15px #FFFFFF, 0 0 2px white;
+    border-radius: 7px;
+}
+
+#progress_bar .completed:after {
+    content: '%';
+}
+
+#abort {
+    cursor: pointer;
+}
+
+canvas {
+    width: 100%;
+    height: 200px;
+    border: 1px solid #FFFF00;
+    margin: 10px 0 0 0;
 }

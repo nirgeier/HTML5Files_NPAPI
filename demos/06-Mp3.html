@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo 6: Drag and Drop + Play MP3 file</title>
+    <!-- Core and extension CSS files -->
+    <link rel="stylesheet" href="../style/custom.css">
+    <link rel="stylesheet" href="../deck/core/deck.core.css">
+    <link rel="stylesheet" id="style-theme-link" href="../style/neon.css">
+    <link rel="stylesheet" id="transition-theme-link" href="../style/fade.css">
+
+    <script src="../js/jdataview.js"></script>
+</head>
+<body class="deck-container">
+
+<section class="slide demoCode">
+    <h2>Demo 6: Drag and Drop + Play MP3 file</h2>
+
+    <div id="dropZone">Drop Mp3 file here</div>
+    <hr>
+
+    <fieldset id="idv3Info" style="display: none;">
+        <legend>IDV3 info:</legend>
+        <output id="info"></output>
+        <br/>
+        <div id="duration"></div>
+        <div id="remainingTime"></div>
+    </fieldset>
+
+    <canvas id="canvas" style="display: none;"></canvas>
+
+</section>
+<script>
+
+var Mp3PlayerDemo = function() {
+
+    // The canvas for the analyser
+    var canvas;
+
+    // Canvas properties
+    var canvasContext;
+
+    // canvas settings
+    var settings = {
+        canvasHeight: -1,
+        canvasWidth : -1,
+        spacerWidth : 2,
+        columnWidth : 1,
+
+        colors : [
+            '#3369E8', // blue
+            '#D53225', // red
+            '#EEB211', // yellow
+            '#009939', // green
+            '#330000', //
+            '#A00000',
+            '#003333']
+    };
+
+    // The Audio API context
+    var audioContext;
+
+    var source;
+    var processor;
+    var analyser;
+
+    // The remaining play time
+    var remainTime;
+    var remainTimer;
+
+    // Flag to mark if the canvas is visible or not
+    var isCavnasVisible = false;
+
+    /**
+     * Display the IDV3 tag summary
+     * @param info
+     */
+    function displayInfo(info) {
+        var output, field;
+        output = document.querySelector('#info');
+        output.innerHTML = '';
+
+        // Not optimized only for the demo :-)
+        for (field in info) {
+            output.innerHTML += '<mark>' + field + ':</mark>' + info[field] + '<br/>';
+        }
+
+        // Display the info div
+        document.querySelector('#idv3Info').style.display = 'block';
+        webkitNotifications.requestPermission(displayNotification);
+
+    }
+
+    /**
+     * Disconnect after the file has stopped playing
+     */
+    function disconnect() {
+        source.noteOff(0);
+        source.disconnect(0);
+        processor.disconnect(0);
+        analyser.disconnect(0);
+        clearTimeout(remainTimer);
+    }
+
+    function displayNotification() {
+        var notification = webkitNotifications.createNotification('', 'Music will start in about 10 seconds', 'Music will start in about 10 seconds');
+        notification.show();
+    }
+
+
+    /**
+     * The drop event handle.
+     * This method is called when the user is dropping the desired file into on the drop zone
+     * @param evt
+     */
+    function dropEvent(evt) {
+
+        var droppedFiles,reader;
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        // Get the FileList
+        droppedFiles = evt.dataTransfer.files;
+
+        // create the FileReader
+        reader = new FileReader();
+
+        // Register the load event
+        reader.onload = function(fileEvent) {
+
+            var dataView, startIndex, idv3Info = {}, output;
+
+            // Once the file is loaded - build the Audio object
+            initAudio(fileEvent.target.result);
+
+            /**
+             * Parse MP3 IDv3 tag
+             */
+
+            // Get the array of bytes (the content of the song)
+            dataView = new jDataView(fileEvent.target.result);
+
+            // "TAG" starts at byte -128 from EOF.
+            startIndex = dataView.length - 128;
+
+            // Chrome: webkitSlice
+            // FF:     mozSlice
+            var blob = dataView.getString(128, startIndex);
+            var reader2 = new FileReader();
+
+            reader2.readAsText(blob);
+            reader2.onload = function(e) {
+                console.log('reader2:', e.target.result);
+            };
+
+            // Check to see if this song has id3 tag or not
+            // if the value is ID3 its ID3v2 :-)
+            if (dataView.getString(3, 0) === 'ID3' && dataView.getString(3, startIndex) === 'TAG') {
+
+                // See http://en.wikipedia.org/wiki/ID3
+                idv3Info.title = dataView.getString(30, dataView.tell()).replace(/\0/g, '');
+                idv3Info.artist = dataView.getString(30, dataView.tell()).replace(/\0/g, '');
+                idv3Info.album = dataView.getString(30, dataView.tell()).replace(/\0/g, '');
+                idv3Info.year = dataView.getString(4, dataView.tell()).replace(/\0/g, '');
+                displayInfo(idv3Info);
+            } else {
+                // no ID3v1 data found.
+            }
+
+        };
+
+
+        // evt is an ProgressEvent.
+        // register the progress event
+        reader.onprogress = function (evt) {
+
+            // store the progress percent
+            var percentLoaded = -1;
+
+            if (evt.lengthComputable) {
+                // calculate the progress in %
+                percentLoaded = Math.round((evt.loaded / evt.total) * 100);
+            }
+
+            console.log(percentLoaded);
+        };
+
+        // Read the file content
+        reader.readAsArrayBuffer(droppedFiles[0]);
+    }
+
+    /**
+     * Init the audio file
+     * @param data
+     */
+    function initAudio(data) {
+        // creates a sound source
+        source = audioContext.createBufferSource();
+
+        // Decode asynchronously
+        // The data is the ArrayBuffer passed in from the FileReader
+        audioContext.decodeAudioData(data,
+                function(buffer) {
+                    // tell the source which sound to play
+                    source.buffer = buffer;
+
+                    // Set the remain time
+                    remainTime = source.buffer.duration;
+
+                    // display the song duration
+                    document.querySelector('#duration').innerHTML = '<mark>Duration:</mark>' + parseInt(remainTime) + ' seconds';
+
+                    // build up the AudioAPI
+                    createAudio();
+                },
+                // onError
+                function(e) {
+                    console.dir(e);
+                });
+    }
+
+    /**
+     *
+     */
+    function createAudio() {
+
+        //This interface is an AudioNode which can generate, process, or analyse audio directly using JavaScript.
+        // It can have a variable number of inputs and outputs, although it must have at least one input or output
+        processor = audioContext.createJavaScriptNode(2048 /*bufferSize*/, 1 /*num inputs*/, 1 /*num outputs*/);
+        processor.connect(audioContext.destination);
+
+        // register the event that will be called whenever the file is played
+        processor.onaudioprocess = processAudio;
+
+        // This interface represents a node which is able to provide real-time frequency and time-domain analysis information.
+        // The audio stream will be passed un-processed from input to output.
+        analyser = audioContext.createAnalyser();
+        analyser.connect(processor);
+
+        // connect the source to the context's destination (the speakers)
+        source.connect(audioContext.destination);
+        source.connect(analyser);
+
+        // play the source now [ Play immediately.]
+        source.noteOn(0);
+
+        // call the dissconnet method after the file has finished playing
+        setTimeout(disconnect, source.buffer.duration * 1000 + 1000);
+
+        remainTimer = setTimeout(setRemainTime, 10);
+    }
+
+    /**
+     * Nothing special here
+     * @param evt
+     */
+    function dragOver(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        return false;
+    }
+
+    /**
+     * This method is called whenever the file is played,
+     * @param e
+     */
+    function processAudio(e) {
+
+        var i, freqByteData, magnitude, lingrad, length;
+
+        if (!isCavnasVisible) {
+            isCavnasVisible = true;
+            document.querySelector('canvas').style.display = 'block';
+        }
+
+        // Using chrome new html5 data types (Uint8Array).
+        freqByteData = new Uint8Array(analyser.frequencyBinCount);
+
+        analyser.getByteFrequencyData(freqByteData);
+
+        // clear prevoius data
+        canvasContext.clearRect(0, 0, settings.canvasWidth, settings.canvasHeight);
+
+        // Fill the canvas with the song data
+        length = freqByteData.length;
+
+        for (i = 0; i < length; ++i) {
+            magnitude = freqByteData[i] / 1.5;
+            lingrad = canvasContext.createLinearGradient(0, settings.canvasHeight, 0, settings.canvasHeight - magnitude);
+            lingrad.addColorStop(0, settings.colors[i % settings.colors.length]);
+            lingrad.addColorStop(1, settings.colors[i % settings.colors.length]);
+            canvasContext.fillStyle = lingrad;
+            canvasContext.fillRect(i * settings.spacerWidth, settings.canvasHeight, settings.columnWidth, -magnitude);
+        }
+    }
+
+
+    /**
+     * Display the remaining time
+     */
+    function setRemainTime() {
+        var min, sec;
+
+        min = parseInt(remainTime / 60);
+        sec = parseInt(remainTime % 60);
+        document.querySelector('#remainingTime').innerHTML = '<mark>Time left:</mark>' + min + ':' + (sec < 10 ? 0 : '') + sec;
+
+        --remainTime;
+        if (remainTime > 0) {
+            setTimeout(setRemainTime, 1000);
+        }
+    }
+
+    return{
+        /**
+         * Attach the events to the dropZone
+         */
+        init:function() {
+            var dropZone;
+
+            // Get the canvas for the drawings
+            canvas = document.querySelector('canvas');
+
+            // the canvas context
+            canvasContext = canvas.getContext('2d');
+
+            // The audio APi context
+            audioContext = new window.webkitAudioContext();
+
+            settings.canvasHeight = canvas.height;
+            settings.canvasWidth = canvas.width;
+
+            dropZone = document.querySelector('#dropZone');
+            dropZone.addEventListener('drop', dropEvent, false);
+            dropZone.addEventListener('dragover', dragOver, false);
+            dropZone.addEventListener('dragover', dragOver, false);
+
+        }
+    };
+
+}();
+
+Mp3PlayerDemo.init();
+</script>
+</body>
+</html>

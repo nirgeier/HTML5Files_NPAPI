@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo 2: Drag and drop</title>
+    <!-- Core and extension CSS files -->
+    <link rel="stylesheet" href="../style/custom.css">
+    <link rel="stylesheet" href="../deck/core/deck.core.css">
+    <link rel="stylesheet" id="style-theme-link" href="../style/neon.css">
+    <link rel="stylesheet" id="transition-theme-link" href="../style/fade.css">
+
+</head>
+<body class="deck-container">
+
+<section class="slide demoCode">
+    <h2>Demo 2: Drag and drop</h2>
+
+    <details>
+        <summary>More info:</summary>
+        <ul>
+            <li>
+                <a href="http://dev.w3.org/html5/spec-author-view/dnd.html#the-datatransfer-interface" target="_blank">http://dev.w3.org/html5/spec-author-view/dnd.html#the-datatransfer-interface</a>
+            </li>
+            <li>
+                <a href="http://msdn.microsoft.com/en-us/library/ms537658(v=vs.85).aspx" target="_blank">http://msdn.microsoft.com/en-us/library/ms537658(v=vs.85).aspx</a>
+            </li>
+        </ul>
+
+    </details>
+    <div id="dropZone">Drop files here</div>
+    <output></output>
+</section>
+<script>
+
+    var Dummy = function() {
+
+        var
+            // The input type file domNode
+                dropZone = document.querySelector('#dropZone'),
+
+            // The input type file domNode
+                output = document.querySelector('output');
+
+        return{
+
+            init:function() {
+
+                // Setup the dnd listeners.
+                dropZone.addEventListener('dragover', Dummy.handleDragOver, false);
+                dropZone.addEventListener('drop', Dummy.processFiles, false);
+            },
+
+            processFiles: function(e) {
+                var file,files, i, data;
+
+                e.stopPropagation();
+                e.preventDefault();
+
+                // get the list of the selected files [FileList object.]
+                files = e.dataTransfer.files;
+
+                // Clear previous data
+                output.innerHTML = '';
+
+                for (i = 0; file = files[i]; i++) {
+                    data = [];
+                    data.push('<hr/><mark>Name:</mark>' + file.name);
+                    data.push('<mark>Type:</mark>' + file.type || 'n/a');
+                    data.push('<mark>Size:</mark>' + file.size + ' bytes');
+                    data.push('<mark>Last modified:</mark>' + (file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() : 'n/a'));
+                    output.insertAdjacentHTML('beforeEnd', data.join('<br/>'));
+                }
+
+            },
+
+            handleDragOver: function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+            }
+
+
+        }; // return
+    }();
+
+    Dummy.init();
+</script>
+
+</body>
+</html>

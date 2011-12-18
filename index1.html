@@ -1,0 +1,87 @@
+<section class="slide">
+    <h3 class="color2">Monitoring the progress of a read</h3>
+
+    <p> One of the nice things that we get for free when using
+        <mark>async</mark>
+        event handling
+        is the ability to
+        <mark>monitor the progress</mark>
+        of the file read; useful for large files,
+        catching errors,
+        and figuring out when a read is complete.
+        <br/>
+        The
+        <mark>onloadstart</mark>
+        and
+        <mark>onprogress</mark>
+        events can be used
+        to monitor the progress of a read.
+    </p>
+    <span data-list="hidden">
+    <pre class="brush: javascript; highlight: [6,8,13]">
+    // store the progress percent
+    var percentLoaded;
+
+    // evt is an ProgressEvent.
+    function updateProgress(evt) {
+        if (evt.lengthComputable) {
+          // calculate the progress in %
+          var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
+        }
+      }
+
+    // reader = FileReader, register the progress event
+    reader.onprogress = updateProgress;
+    </pre>
+</span>
+</section>
+<section class="slide">
+    <div class="path">File API &raquo; Demos</div>
+    <h2>Demos</h2>
+
+    <ol>
+        <li>
+            <h3><a href="demos/03-CopyPaste.html" target="_blank">Input type=file</a></h3>
+        </li>
+        <li class="slide">
+            <h3><a href="demos/03-CopyPaste.html" target="_blank">Input type=file</a></h3>
+        </li>
+        <li class="slide">
+        </li>
+    </ol>
+</section>
+
+
+
+<p class="deck-status">
+    <span class="deck-status-current"></span>
+    /
+    <span class="deck-status-total"></span>
+</p>
+
+<footer>
+    <img src="images/bug.png" id="footerBug">
+
+    <div class="name">Nir Geier</div>
+    <div> - HTML5 File API / File System API / NPAPI</div>
+</footer>
+
+<script src="js/jquery-1.7.min.js"></script>
+
+<!-- Deck Core and extensions -->
+<script src="deck/core/deck.core.js"></script>
+<script src="deck/extensions/hash/deck.hash.js"></script>
+<script src="deck/extensions/menu/deck.menu.js"></script>
+<script src="deck/extensions/goto/deck.goto.js"></script>
+<script src="deck/extensions/status/deck.status.js"></script>
+<script src="deck/extensions/navigation/deck.navigation.js"></script>
+
+<!-- Specific to this page -->
+<script>
+    $(function() {
+        // Deck initialization
+        $.deck('.slide');
+    });
+</script>
+</body>
+</html>

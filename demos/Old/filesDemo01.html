@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <link rel="stylesheet" href="../style/demo.css">
+    <title>Local files Drag and Drop</title>
+</head>
+<body>
+<input type="file" id="files" name="files[]" multiple webkitdirectory/>
+<br>
+<br>
+<div id="drop_zone">Drop files here</div>
+<br>
+<hr>
+<br>
+<output id="list" class="small"></output>
+
+<script>
+
+    function processFileList(filesList) {
+
+        // files is a FileList of File objects. List some properties.
+        var output = [];
+        filesList.forEach(function(file) {
+            output.push('<li><strong>', file.name, '</strong> (', file.type || 'n/a', ') - ',
+                    file.size, ' bytes, last modified: ',
+                    file.lastModifiedDate.toLocaleDateString(), '</li>');
+        });
+        document.querySelector('#list').innerHTML = '<ul>' + output.join('') + '</ul>';
+    }
+
+    function handleFileInput(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        processFileList(Array.prototype.slice.call(evt.target.files));
+    }
+
+    function handleFileSelect(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        processFileList(Array.prototype.slice.call(evt.dataTransfer.files));
+    }
+
+    function handleDragOver(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+    }
+
+    // Setup the dnd listeners.
+    var dropZone = document.getElementById('drop_zone');
+    dropZone.addEventListener('dragover', handleDragOver, false);
+    dropZone.addEventListener('drop', handleFileSelect, false);
+    document.querySelector('#files').addEventListener('change', handleFileInput, false);
+</script>
+</body>
+</html>

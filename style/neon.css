@@ -1,7 +1,7 @@
 .deck-container {
     font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     font-size: 1.75em;
-    color: #aaa;
+    color: #ffff00;
     background: #000;
     width: 960px;
     margin: 0 auto;
@@ -28,10 +28,9 @@
 }
 
 .deck-container .slide h3 {
-    color: #fff;
+    color: #ffff00;
     font-weight: normal;
     font-weight: 100;
-    text-shadow: 0 0 10px #fff, 0 0 2px #fff;
 }
 
 .deck-container .slide pre {
