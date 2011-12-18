@@ -19,9 +19,10 @@
     <hr>
 
     <fieldset id="idv3Info" style="display: none;">
-        <legend>IDV3 info:</legend>
+        <legend><h4>IDV3 info:</h4></legend>
         <output id="info"></output>
         <br/>
+
         <div id="duration"></div>
         <div id="remainingTime"></div>
     </fieldset>
@@ -81,7 +82,7 @@ var Mp3PlayerDemo = function() {
 
         // Not optimized only for the demo :-)
         for (field in info) {
-            output.innerHTML += '<mark>' + field + ':</mark>' + info[field] + '<br/>';
+            output.insertAdjacentHTML('beforeEnd', '<mark>' + field + ':</mark>' + info[field] + '<br/>');
         }
 
         // Display the info div
@@ -157,10 +158,10 @@ var Mp3PlayerDemo = function() {
             if (dataView.getString(3, 0) === 'ID3' && dataView.getString(3, startIndex) === 'TAG') {
 
                 // See http://en.wikipedia.org/wiki/ID3
-                idv3Info.title = dataView.getString(30, dataView.tell()).replace(/\0/g, '');
-                idv3Info.artist = dataView.getString(30, dataView.tell()).replace(/\0/g, '');
-                idv3Info.album = dataView.getString(30, dataView.tell()).replace(/\0/g, '');
-                idv3Info.year = dataView.getString(4, dataView.tell()).replace(/\0/g, '');
+                idv3Info.Title = dataView.getString(30, dataView.tell()).replace(/\0/g, '');
+                idv3Info.Artist = dataView.getString(30, dataView.tell()).replace(/\0/g, '');
+                idv3Info.Album = dataView.getString(30, dataView.tell()).replace(/\0/g, '');
+                idv3Info.Year = dataView.getString(4, dataView.tell()).replace(/\0/g, '');
                 displayInfo(idv3Info);
             } else {
                 // no ID3v1 data found.

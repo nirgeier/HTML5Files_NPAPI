@@ -127,3 +127,10 @@ canvas {
     border: 1px solid #FFFF00;
     margin: 10px 0 0 0;
 }
+
+fieldset {
+    padding: 3px 20px 10px !important;
+    border: 1px solid white !important;
+    border-radius: 5px;
+    margin: 3px !important;
+}

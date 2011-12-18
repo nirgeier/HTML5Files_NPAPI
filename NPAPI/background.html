@@ -1,0 +1,131 @@
+<html>
+<head>
+    <title>NPAPI File IO</title>
+</head>
+<body>
+<p>
+    <embed type="application/x-npapi-file-io" id="plugin0"/>
+</p>
+
+
+<script type="text/javascript">
+
+    var counter = Date.now();
+
+    // API methods
+    /*
+     bool removeDirectory(const char *filename);
+     bool fileExists(const char *name);
+     bool isDirectory(const char *name);
+     bool getFile(const char *filename, char *&value, size_t &len, const bool issBinary);
+     bool createDirectory(const char *filename);
+     bool removeFile(const char *filename);
+     bool saveText(const char *filename, const char *value, size_t len);
+     bool saveBinaryFile(const char *filename, const char *bytes, const size_t len);
+     bool getTempPath(char *&value, size_t &len);
+     bool listFiles(const char *normalisedDirectoryName, std::vector<FileEntry *> *&files);
+     */
+
+    // Global namespace
+    var GLOBALS = {
+
+        // The folder path that we will list the content
+        foldersToList : ['c:/windows/help'],
+
+        // The folder that we will create
+        folderToCreate: 'c:/nirgeier'
+
+    };
+
+    /**
+     * The Demo code
+     */
+    var MyDemo = function() {
+
+        // The External plugin
+        var plugin = document.querySelector('#plugin0');
+
+        return {
+
+            init : function() {
+
+                chrome.extension.onConnect.addListener(function(port) {
+                    port.onMessage.addListener(function(message) {
+                        console.log('Message:', message);
+
+                        // get the file extension
+
+                        MyDemo.downloadFile({
+                            'fileName': message.url.substring(message.url.lastIndexOf('/')),
+                            'url' : message.url
+                        });
+                    }); // port.onMessage
+                });
+
+                // Check to see if we need to create the directory or not.
+                if (plugin.isDirectory(GLOBALS.folderToCreate)) {
+                    console.log('Directory [' + GLOBALS.folderToCreate + '] already exists');
+                } else {
+                    plugin.createDirectory(GLOBALS.folderToCreate);
+                }
+
+                this.listFiles();
+            },
+
+            /**
+             * Download and save the file
+             * obj - fileName, fileUrl
+             */
+            downloadFile: function (obj) {
+
+                console.log('Loading: ', obj.fileName);
+
+                if (! plugin.fileExists(GLOBALS.folderToCreate + '/' + obj.fileName)) {
+
+                    console.log(obj.url);
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', obj.url, true);
+                    xhr.responseType = 'arraybuffer';
+
+                    xhr.onload = function(e) {
+                        var content = new Uint8Array(this.response); // this.response == uInt8Array.buffer
+                        // var byte3 = uInt8Array[4]; // byte at offset 4
+                        plugin.saveBinaryFile(GLOBALS.folderToCreate + '/' + obj.fileName, content);
+                        console.log('File created: ', GLOBALS.folderToCreate + '/' + obj.fileName);
+                    };
+
+                    xhr.send();
+                }
+            },
+
+            listFiles: function () {
+                var files, index, rootFolder;
+
+                if (GLOBALS.foldersToList.length === 0) {
+                    return;
+                }
+
+                rootFolder = GLOBALS.foldersToList.shift();
+
+                // List the files under the directory
+                console.log('List of files/folders under : [' + rootFolder + ']');
+
+                // Loop and display the files in the directory:
+                files = plugin.listFiles(rootFolder);
+
+                for (index = 0; index < files.length; index++) {
+                    console.log(JSON.stringify(files[index]));
+                }
+
+            }
+
+        };
+    }();
+
+    // Run the demo
+    MyDemo.init();
+
+</script>
+</body>
+</html>
+

@@ -258,6 +258,12 @@
         <li class="slide">
             <a href="demos/04-Slice.html" target="_blank">Read part of file</a>
         </li>
+        <li class="slide">
+            <a href="demos/05-Progress.html" target="_blank">Read progress</a>
+        </li>
+        <li class="slide">
+            <a href="demos/06-Mp3.html" target="_blank">Read MP3</a>
+        </li>
     </ul>
 </section>
 
@@ -290,7 +296,7 @@
 <script>
     $(function() {
         // Deck initialization
-        $.deck('.slide');
+        $.deck('.slide', {countNested: false});
         SyntaxHighlighter.all();
     });
 </script>
