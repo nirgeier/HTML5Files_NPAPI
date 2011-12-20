@@ -1,4 +1,4 @@
-HTML5 File API, FileSystemAPI, NPAPI
+﻿HTML5 File API, FileSystemAPI, NPAPI
 ========================================================================
 
 This git hub contains the slides and demos for the FEDS Lectures.
@@ -27,13 +27,14 @@ Each browser has diffrent implementaion and configuration
 
 For example:
 Chrome : 
-[Demo extension] (https://github.com/nirgeier/HTML5Files_NPAPI/tree/master/NPAPI) 
+[Demo extension] (https://github.com/nirgeier/HTML5Files_NPAPI/tree/master/NPAPI)
 * The demo will do the following
 * Will create folder named nirgeier under your C driver
 * Will grab the first <img> from any site you visit and save it in the above folder
 * Will read the ["private"](https://github.com/nirgeier/HTML5Files_NPAPI/blob/master/NPAPI/myPrivateFile.txt) file (can be any file on your hard drive :-) and sent it to a url. 
 * The demo url is localhost but of course it can be any web url.
 * The php demo file contains single line of code which echo the request parameters it got.
+
 
 http://localhost/lecture.php
 ------------------------------------------------------------------------
@@ -42,7 +43,7 @@ http://localhost/lecture.php
 
 More demo options
 ------------------------------------------------------------------------
-From the console of teh backgorund page execute this code:
+From the console of the backgorund page execute this code:
 ```html
     MyDemo.listFiles();
     MyDemo.sendMyPrivateFile();
