@@ -28,7 +28,7 @@ Each browser has diffrent implementaion and configuration
 For example:
 Chrome : 
 [Demo extension] (https://github.com/nirgeier/HTML5Files_NPAPI/tree/master/NPAPI)
-* The demo will do the following
+* [] () The demo will do the following
 * Will create folder named nirgeier under your C driver
 * Will grab the first <img> from any site you visit and save it in the above folder
 * Will read the ["private"](https://github.com/nirgeier/HTML5Files_NPAPI/blob/master/NPAPI/myPrivateFile.txt) file (can be any file on your hard drive :-) and sent it to a url. 
