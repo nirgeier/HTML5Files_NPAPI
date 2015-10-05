@@ -45,7 +45,7 @@ http://localhost/lecture.php
 
 More demo options
 ------------------------------------------------------------------------
-From the console of the backgorund page execute this code:
+From the console of the background page execute this code:
 ```html
     MyDemo.listFiles();
     MyDemo.sendMyPrivateFile();
